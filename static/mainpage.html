@@ -1,0 +1,70 @@
+<!-- mainpage.html -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Twitch Go App - Authorization</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background-color: #f0f2f5;
+      margin: 0;
+    }
+
+    .container {
+      background-color: #fff;
+      padding: 40px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+
+    h1 {
+      color: #6441a5;
+      margin-bottom: 20px;
+    }
+
+    p {
+      color: #555;
+      margin-bottom: 30px;
+    }
+
+    .button {
+      display: inline-block;
+      background-color: #6441a5;
+      color: white;
+      padding: 12px 25px;
+      border-radius: 5px;
+      text-decoration: none;
+      font-weight: bold;
+      transition: background-color 0.3s ease;
+      margin: 0 10px;
+    }
+
+    .button:hover {
+      background-color: #523187;
+    }
+    .button-group {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>Welcome to Twitch Go App</h1>
+    <p>Access live Twitch data and features using the app's credentials.</p>
+    <div class="button-group">
+      <a href="/dashboard" class="button">Dashboard</a>
+      <a href="/authorize" class="button">Authorize</a>
+    </div>
+  </div>
+</body>
+
+</html>

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Authorize with Twitch</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      background: #18181b;
+      color: #fafafa;
+      font-family: sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    .card {
+      background: #23272e;
+      padding: 2em 2.5em;
+      border-radius: 12px;
+      box-shadow: 0 2px 12px #0004;
+      text-align: center;
+    }
+
+    button {
+      background: #9147ff;
+      color: #fff;
+      border: none;
+      padding: 0.8em 2em;
+      border-radius: 6px;
+      font-size: 1.1em;
+      cursor: pointer;
+      margin-top: 1em;
+    }
+
+    button:hover {
+      background: #772ce8;
+    }
+
+    .status {
+      margin-top: 2em;
+      font-size: 1.1em;
+    }
+
+    .dashboard-btn {
+      background: #50fa7b;
+      color: #18181b;
+      margin-top: 1.5em;
+    }
+
+    .dashboard-btn:hover {
+      background: #3ecf6d;
+    }
+
+    .token-flex {
+      display: flex;
+      gap: 2em;
+      margin-top: 2em;
+      justify-content: center;
+    }
+    .token-card {
+      background: #23272e;
+      border-radius: 8px;
+      padding: 1em 2em;
+      min-width: 220px;
+      box-shadow: 0 1px 6px #0002;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .token-label {
+      font-weight: bold;
+      margin-bottom: 0.5em;
+    }
+    .token-expiry {
+      font-size: 0.95em;
+      margin-top: 0.5em;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="card">
+    <h2>Authorize with Twitch</h2>
+    <button id="authBtn">Authorize</button>
+    <div class="status" id="status">Checking status...</div>
+    <div class="token-flex" id="tokenFlex"></div>
+    <button id="dashboardBtn" class="dashboard-btn" style="display:none">Go to Dashboard</button>
+  </div>
+  <script>
+    function fetchStatus() {
+      fetch('/auth/status')
+        .then(r => r.json())
+        .then(data => {
+          const statusDiv = document.getElementById('status');
+          const tokenFlex = document.getElementById('tokenFlex');
+          let html = '';
+          let flexHtml = '';
+          // User Token
+          if (!data.authorized) {
+            html += '<span style="color:#ff5555">User Token: Not authorized</span><br>';
+            flexHtml += `<div class="token-card"><div class="token-label">User Token</div><div style='color:#ff5555'>Not authorized</div></div>`;
+          } else {
+            html += '<span style="color:#50fa7b">User Token: Authorized</span><br>Expires at: ' + new Date(data.user_expires_at).toLocaleString() + '<br>';
+            flexHtml += `<div class="token-card"><div class="token-label">User Token</div><div style='color:#50fa7b'>Authorized</div><div class='token-expiry'>Expires at:<br>${new Date(data.user_expires_at).toLocaleString()}</div></div>`;
+          }
+          // App Token
+          if (!data.app_authorized) {
+            html += '<span style="color:#ffb86c">App Token: Not available</span>';
+            flexHtml += `<div class="token-card"><div class="token-label">App Token</div><div style='color:#ffb86c'>Not available</div></div>`;
+          } else {
+            html += '<span style="color:#50fa7b">App Token: Available</span><br>Expires at: ' + new Date(data.app_expires_at).toLocaleString();
+            flexHtml += `<div class="token-card"><div class="token-label">App Token</div><div style='color:#50fa7b'>Available</div><div class='token-expiry'>Expires at:<br>${new Date(data.app_expires_at).toLocaleString()}</div></div>`;
+          }
+          statusDiv.innerHTML = html;
+          tokenFlex.innerHTML = flexHtml;
+          // Show dashboard button if both tokens are present
+          const dashBtn = document.getElementById('dashboardBtn');
+          if (data.authorized && data.app_authorized) {
+            dashBtn.style.display = '';
+          } else {
+            dashBtn.style.display = 'none';
+          }
+        });
+    }
+    document.getElementById('authBtn').onclick = function () {
+      window.location = '/auth/start';
+    };
+    document.getElementById('dashboardBtn').onclick = function () {
+      window.location = '/dashboard';
+    };
+    fetchStatus();
+    setInterval(fetchStatus, 10000);
+  </script>
+</body>
+
+</html>
