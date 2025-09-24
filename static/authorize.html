@@ -91,6 +91,12 @@
     <button id="dashboardBtn" class="dashboard-btn" style="display:none">Go to Dashboard</button>
   </div>
   <script>
+    function formatExpiry(value) {
+      if (!value) return 'Unknown';
+      const d = new Date(value);
+      if (Number.isNaN(d.getTime())) return 'Unknown';
+      return d.toLocaleString();
+    }
     function fetchStatus() {
       fetch('/auth/status')
         .then(r => r.json())
@@ -104,16 +110,18 @@
             html += '<span style="color:#ff5555">User Token: Not authorized</span><br>';
             flexHtml += `<div class="token-card"><div class="token-label">User Token</div><div style='color:#ff5555'>Not authorized</div></div>`;
           } else {
-            html += '<span style="color:#50fa7b">User Token: Authorized</span><br>Expires at: ' + new Date(data.user_expires_at).toLocaleString() + '<br>';
-            flexHtml += `<div class="token-card"><div class="token-label">User Token</div><div style='color:#50fa7b'>Authorized</div><div class='token-expiry'>Expires at:<br>${new Date(data.user_expires_at).toLocaleString()}</div></div>`;
+            const userExpiry = formatExpiry(data.user_expires_at);
+            html += '<span style="color:#50fa7b">User Token: Authorized</span><br>Expires at: ' + userExpiry + '<br>';
+            flexHtml += `<div class="token-card"><div class="token-label">User Token</div><div style='color:#50fa7b'>Authorized</div><div class='token-expiry'>Expires at:<br>${userExpiry}</div></div>`;
           }
           // App Token
           if (!data.app_authorized) {
             html += '<span style="color:#ffb86c">App Token: Not available</span>';
             flexHtml += `<div class="token-card"><div class="token-label">App Token</div><div style='color:#ffb86c'>Not available</div></div>`;
           } else {
-            html += '<span style="color:#50fa7b">App Token: Available</span><br>Expires at: ' + new Date(data.app_expires_at).toLocaleString();
-            flexHtml += `<div class="token-card"><div class="token-label">App Token</div><div style='color:#50fa7b'>Available</div><div class='token-expiry'>Expires at:<br>${new Date(data.app_expires_at).toLocaleString()}</div></div>`;
+            const appExpiry = formatExpiry(data.app_expires_at);
+            html += '<span style="color:#50fa7b">App Token: Available</span><br>Expires at: ' + appExpiry;
+            flexHtml += `<div class="token-card"><div class="token-label">App Token</div><div style='color:#50fa7b'>Available</div><div class='token-expiry'>Expires at:<br>${appExpiry}</div></div>`;
           }
           statusDiv.innerHTML = html;
           tokenFlex.innerHTML = flexHtml;

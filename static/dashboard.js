@@ -270,7 +270,7 @@ ws.onmessage = (event) => {
       chatContainer.removeChild(chatContainer.firstChild);
     }
   }
-  // Render USERNOTICE and other IRC notices into results (only for monitored channels)
+  // Render USERNOTICE and other room notices into results (only for monitored channels)
   if (data.type === 'notice' && data.channel && monitoredChannels.includes(data.channel)) {
     addNoticeEntry(data.channel, 'notice', data.system || 'Notification');
   }
@@ -279,7 +279,7 @@ ws.onmessage = (event) => {
   }
   // Subscription acknowledgement
   if (data.type === 'subscribed' && data.channel) {
-    addNoticeEntry(data.channel, 'joined', `Now monitoring #${data.channel}. IRC notices will appear here.`);
+    addNoticeEntry(data.channel, 'joined', `Now monitoring #${data.channel}. Room notices will appear here.`);
   }
   if (data.type === 'clearchat' && data.channel && monitoredChannels.includes(data.channel)) {
     addNoticeEntry(data.channel, 'clearchat', 'Chat cleared / moderation action triggered');
@@ -360,7 +360,7 @@ function subscribeToIRCChat() {
   // Optionally update chat status
   updateChatStatus(`Monitoring ${monitoredChannels.map(c => `#${c}`).join(',')}`, true);
   // Add a notice entry so UI responds immediately
-  addNoticeEntry(channel, 'joined', `Now monitoring #${channel}. IRC notices will appear here.`);
+  addNoticeEntry(channel, 'joined', `Now monitoring #${channel}. Room notices will appear here.`);
 }
 function unsubscribeFromIRCChat(channel) {
   ws.send(JSON.stringify({ action: 'unsubscribe', channel }));

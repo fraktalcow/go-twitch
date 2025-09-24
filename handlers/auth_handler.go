@@ -72,20 +72,32 @@ func AuthCallback(c *fiber.Ctx) error {
 
 func AuthStatus(c *fiber.Ctx) error {
 	userToken := os.Getenv("TWITCH_USER_ACCESS_TOKEN")
+	userExpiresStr := os.Getenv("TWITCH_USER_ACCESS_TOKEN_EXPIRES_AT")
 	appToken := os.Getenv("TWITCH_APP_ACCESS_TOKEN")
 	appExpiresStr := os.Getenv("TWITCH_APP_ACCESS_TOKEN_EXPIRES_AT")
+	
+	var userExpires time.Time
 	var appExpires time.Time
 	var appAuthorized bool
+	
+	if userToken != "" && userExpiresStr != "" {
+		if parsed, err := time.Parse(time.RFC3339, userExpiresStr); err == nil {
+			userExpires = parsed
+		}
+	}
+	
 	if appToken != "" && appExpiresStr != "" {
 		if parsed, err := time.Parse(time.RFC3339, appExpiresStr); err == nil {
 			appExpires = parsed
 			appAuthorized = true
 		}
 	}
+	
 	return c.JSON(fiber.Map{
-		"authorized":     userToken != "",
-		"app_authorized": appAuthorized,
-		"app_expires_at": appExpires,
+		"authorized":      userToken != "",
+		"user_expires_at": userExpires,
+		"app_authorized":  appAuthorized,
+		"app_expires_at":  appExpires,
 	})
 }
 
